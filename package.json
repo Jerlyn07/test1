@@ -1,6 +1,7 @@
 {
   "name": "formatter_iview",
   "version": "0.1.0",
+  "homepage": "https://Jerlyn07.github.io/test1",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -16,9 +17,12 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "@types/core-js": "^0.9.0"
+    "@types/core-js": "^0.9.0",
+    "gh-pages": "^5.0.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
