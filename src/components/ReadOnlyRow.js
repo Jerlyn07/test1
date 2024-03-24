@@ -4,7 +4,7 @@ const ReadOnlyRow = ({ item, index, handleEditClick, handleDeleteClick}) => {
   return (
     <tr key={index}>
       <td> {item["View"]}</td>
-            <td> {item["Section Name"]}  </td>
+            <td> {item["Section_Name"]}  </td>
             <td> {item["Section_Display"]}</td>
             <td> {item["Section_Status"]} </td>
             <td> {item["Section_Default_Open"]} </td>
