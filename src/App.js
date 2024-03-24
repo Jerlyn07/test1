@@ -1,10 +1,10 @@
 import React, { useState, Fragment } from "react";
-import excelStore from "./store"
+import excelStore from "./store/index.js"
 import Papa from 'papaparse'
 // import { nanoid } from "nanoid";
 import "./App.css";
-import ReadOnlyRow from "./components/ReadOnlyRow";
-import EditableRow from "./components/EditableRow";
+import ReadOnlyRow from "./components/ReadOnlyRow.js";
+import EditableRow from "./components/EditableRow.js";
 import * as XLSX from 'xlsx';
 
 
@@ -50,34 +50,100 @@ const App = () => {
   const [editItemId, setEditItemId] = useState(null);
 
   const downloadExcel = (data) => {
-    let exportData = data.map(items=>{
-      return {
-       "Action": items["Action"]='ADD',
-       "Parent Unique Value" : items["Section_Name"],
-       "Parent Display" : items["Section_Display"],
-       "Move or Copy to/Existing Event Set Name" : '',
-       "Event Set Name" : items["Primitive_EventSet_Name"],
-       "Event Set Display" : items["Primitive_EventSet_Display"],
-       "Event Set Description" : items["Primitive_EventSet_Name"],
-       "Event Set Definition" : items["Primitive_EventSet_Name"],
-       "Event Set Show No Data Ind" : '',
-       "Event Set Display Assoc Ind" : '',
-       "Primitive Ind" : '',
-       "Event Set Sequence" : '',
-       "Event Code Value" : items["Assay_Display"],
-       "Event Code Display" : items["Assay_Display"],
-       "Event Code Description" : items["Assay_Display"],
-       "Event Code Definition" : items["Assay_Display"],
-       "Event Code Class" :'',
-       "Event Code Add Access Ind" : '',
-       "Event Code Chg Access Ind" : '',
-       "Mapped Proc Type" : '',
-       "Mapped Proc Display" : '',
-       "Mapped Proc Code Value" : '',
-       "Charting Indicator" : '',
-       "Errors" : '',
+    let addFolder = [];
+    let addData = [];
+    let updateData = [];
+    let uniqueSectionNames = new Set();
+    
+    data.forEach(items => {
+      if (!uniqueSectionNames.has(items["Section_Name"])) {
+          uniqueSectionNames.add(items["Section_Name"]);
+          let addFolderAction = {
+              "Action": 'ADD1',
+              "Parent Unique Value": 'Assessments and Treatments',
+              "Parent Display": 'Assessments and Treatments',
+              "Move or Copy to/Existing Event Set Name" : '',
+              "Event Set Name": items["Section_Name"],
+              "Event Set Display": items["Section_Display"],
+              "Event Set Description": items["Section_Display"],
+              "Event Set Definition": items["Section_Display"],
+              "Event Set Show No Data Ind" : '',
+              "Event Set Display Assoc Ind" : '',
+              "Primitive Ind" : '',
+              "Event Set Sequence" : '',
+              "Event Code Value" : '',
+              "Event Code Display" : '',
+              "Event Code Description" : '',
+              "Event Code Definition" : '',
+              "Event Code Class" :'',
+              "Event Code Add Access Ind" : '',
+              "Event Code Chg Access Ind" : '',
+              "Mapped Proc Type" : '',
+              "Mapped Proc Display" : '',
+              "Mapped Proc Code Value" : '',
+              "Charting Indicator" : '',
+              "Errors" : '',
+          };
+          addFolder.push(addFolderAction);
       }
-    })
+  
+      let addAction = {
+          "Action": 'ADD',
+          "Parent Unique Value": items["Section_Name"],
+          "Parent Display": items["Section_Display"],
+          "Move or Copy to/Existing Event Set Name": '',
+          "Event Set Name": items["Primitive_EventSet_Name"],
+          "Event Set Display": items["Primitive_EventSet_Display"],
+          "Event Set Description": items["Primitive_EventSet_Name"],
+          "Event Set Definition": items["Primitive_EventSet_Name"],
+          "Event Set Show No Data Ind" : '',
+          "Event Set Display Assoc Ind" : '',
+          "Primitive Ind" : '',
+          "Event Set Sequence" : '',
+          "Event Code Value" : '',
+          "Event Code Display" : '',
+          "Event Code Description" : '',
+          "Event Code Definition" : '',
+          "Event Code Class" :'',
+          "Event Code Add Access Ind" : '',
+          "Event Code Chg Access Ind" : '',
+          "Mapped Proc Type" : '',
+          "Mapped Proc Display" : '',
+          "Mapped Proc Code Value" : '',
+          "Charting Indicator" : '',
+          "Errors" : '',
+      };
+  
+      let updateAction = {
+          "Action": 'UPDATE',
+          "Parent Unique Value": items["Primitive_EventSet_Name"],
+          "Parent Display": items["Primitive_EventSet_Display"],
+          "Move or Copy to/Existing Event Set Name": '',
+          "Event Set Name": '',
+          "Event Set Display": '',
+          "Event Set Description": '',
+          "Event Set Definition": '',
+          "Event Set Show No Data Ind" : '',
+          "Event Set Display Assoc Ind" : '',
+          "Primitive Ind" : '',
+          "Event Set Sequence" : '',
+          "Event Code Value" : items["Assay_Display"],
+          "Event Code Display" : items["Assay_Display"],
+          "Event Code Description" : items["Assay_Display"],
+          "Event Code Definition" : items["Assay_Display"],
+          "Event Code Class" :'',
+          "Event Code Add Access Ind" : '',
+          "Event Code Chg Access Ind" : '',
+          "Mapped Proc Type" : '',
+          "Mapped Proc Display" : '',
+          "Mapped Proc Code Value" : '',
+          "Charting Indicator" : '',
+          "Errors" : '',
+      };
+      addData.push(addAction);
+      updateData.push(updateAction);
+  });
+    const exportData = [...addFolder, ...addData, ...updateData];
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
